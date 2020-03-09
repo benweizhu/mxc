@@ -23,7 +23,7 @@ public class WebSecurityConfig {
     protected void configure(HttpSecurity http) throws Exception {
       http.antMatcher("/greeting")
           .authorizeRequests()
-          .antMatchers("/greeting").hasRole("user")
+          .antMatchers("/greeting").hasRole("USER")
           .and()
           .formLogin();
     }
@@ -35,18 +35,31 @@ public class WebSecurityConfig {
   public static class AdminPageSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http.antMatcher("/admin")
+          .authorizeRequests()
+          .antMatchers("/admin").hasRole("ADMIN")
+          .and()
+          .formLogin();
+    }
+
+  }
+
+  @Configuration
+  @Order(3)
+  public static class FallbackSecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
       PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-      UserDetails userDetails = User.builder().username("admin").password(encoder.encode("password")).roles("ADMIN").build();
-      auth.inMemoryAuthentication().withUser(userDetails);
+      UserDetails admin = User.builder().username("admin").password(encoder.encode("password")).roles("ADMIN").build();
+      UserDetails user = User.builder().username("user").password(encoder.encode("password")).roles("USER").build();
+      auth.inMemoryAuthentication().withUser(admin).withUser(user);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-      http.authorizeRequests()
-          .antMatchers("/hello").hasRole("ADMIN")
-          .and()
-          .formLogin();
+      http.antMatcher("/**").authorizeRequests().anyRequest().permitAll().and().formLogin();
     }
 
   }
