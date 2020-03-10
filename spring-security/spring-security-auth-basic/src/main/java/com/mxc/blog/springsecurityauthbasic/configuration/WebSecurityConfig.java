@@ -47,6 +47,19 @@ public class WebSecurityConfig {
 
   @Configuration
   @Order(3)
+  public static class APISecurityConfigurer extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+      http.antMatcher("/api/**")
+          .authorizeRequests()
+          .antMatchers("/api/**").hasRole("API");
+    }
+
+  }
+
+  @Configuration
+  @Order(4)
   public static class FallbackSecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -54,7 +67,8 @@ public class WebSecurityConfig {
       PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
       UserDetails admin = User.builder().username("admin").password(encoder.encode("password")).roles("ADMIN").build();
       UserDetails user = User.builder().username("user").password(encoder.encode("password")).roles("USER").build();
-      auth.inMemoryAuthentication().withUser(admin).withUser(user);
+      UserDetails api = User.builder().username("api").password(encoder.encode("password")).roles("API").build();
+      auth.inMemoryAuthentication().withUser(admin).withUser(user).withUser(api);
     }
 
     @Override
