@@ -66,7 +66,6 @@ public class WebSecurityConfig {
     protected void configure(HttpSecurity http) throws Exception {
       AuthenticationFilter filter = new AuthenticationFilter(customAuthenticationManager, customAuthenticationConverter);
       filter.setSuccessHandler(new CustomAuthenticationSuccessHandler());
-      filter.setRequestMatcher(new AntPathRequestMatcher("/api/**"));
       http.antMatcher("/api/**")
           .addFilterAfter(filter, UsernamePasswordAuthenticationFilter.class)
           .authorizeRequests()

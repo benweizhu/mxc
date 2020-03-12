@@ -8,14 +8,19 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 
+import static org.springframework.util.StringUtils.isEmpty;
+
 @Component
 public class CustomAuthenticationConverter implements AuthenticationConverter {
 
   @Override
   public Authentication convert(HttpServletRequest request) {
     String username = request.getHeader("username");
-    return new UsernamePasswordAuthenticationToken(
-        username, null, new ArrayList<>());
+    if (!isEmpty(username)) {
+      return new UsernamePasswordAuthenticationToken(
+          username, null, new ArrayList<>());
+    }
+    return null;
   }
 
 }
