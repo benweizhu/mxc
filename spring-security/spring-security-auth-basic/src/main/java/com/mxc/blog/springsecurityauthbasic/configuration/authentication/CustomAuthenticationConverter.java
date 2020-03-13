@@ -17,8 +17,7 @@ public class CustomAuthenticationConverter implements AuthenticationConverter {
   public Authentication convert(HttpServletRequest request) {
     String username = request.getHeader("username");
     if (!isEmpty(username)) {
-      return new UsernamePasswordAuthenticationToken(
-          username, null, new ArrayList<>());
+      return new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
     }
     return null;
   }
